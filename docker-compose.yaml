@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   # Base image containing dependencies.
   base:
@@ -20,11 +19,15 @@ services:
       # Allows graphical programs in the container.
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
+      - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
+    runtime: nvidia
+    privileged: true
     volumes:
       # Allows graphical programs in the container.
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
+      - /dev/dri:/dev/dri:rw
     deploy:
       resources:
         reservations:
@@ -57,7 +60,8 @@ services:
 
     volumes:
       # Mount the source code
-      - ./dev_packages:/overlay_ws/src/:rw 
+      - ${SAVA_DATA_DIR}:/overlay_ws/data/:rw
+      - ${OUTPUT_DIR_LOCAL}:/overlay_ws/output/:rw
 
     user: ${USERNAME:-devuser}
     command: bash -c "sudo chmod 777 -R /overlay_ws/ && exec sleep infinity"
