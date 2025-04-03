@@ -60,10 +60,14 @@ services:
 
     volumes:
       # Mount the source code
-      - ${SAVA_DATA_DIR}:/overlay_ws/data/:rw
+      - ${DATA_DIR_LOCAL}:/overlay_ws/data/:rw
       - ${OUTPUT_DIR_LOCAL}:/overlay_ws/output/:rw
 
     user: ${USERNAME:-devuser}
+
+    devices:
+    - /dev/bus/usb:/dev/bus/usb  # Mount all USB devices to the container.
+    
     command: bash -c "sudo chmod 777 -R /overlay_ws/ && exec sleep infinity"
   
   #viz:
